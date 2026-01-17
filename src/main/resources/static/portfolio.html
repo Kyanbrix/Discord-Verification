@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            transition: opacity 0.3s ease;
+        }
+
+        h1 {
+            color: white;
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.7);
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            margin-bottom: 3rem;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .portfolio-btn {
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 1.5rem 2rem;
+            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-weight: 600;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .portfolio-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .portfolio-btn:hover::before {
+            left: 100%;
+        }
+
+        .portfolio-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .portfolio-btn:active {
+            transform: translateX(5px) scale(0.98);
+        }
+
+        .portfolio-btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .portfolio-btn::after {
+            content: '→';
+            position: absolute;
+            right: 2rem;
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+
+        .portfolio-btn:hover::after {
+            opacity: 1;
+            right: 1.5rem;
+        }
+
+        .portfolio-btn:nth-child(1):hover {
+            border-color: #ff6b6b;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+        }
+
+        .portfolio-btn:nth-child(2):hover {
+            border-color: #4ecdc4;
+            box-shadow: 0 10px 30px rgba(78, 205, 196, 0.3);
+        }
+
+        .portfolio-btn:nth-child(3):hover {
+            border-color: #ffe66d;
+            box-shadow: 0 10px 30px rgba(255, 230, 109, 0.3);
+        }
+
+        .portfolio-btn:nth-child(4):hover {
+            border-color: #a8e6cf;
+            box-shadow: 0 10px 30px rgba(168, 230, 207, 0.3);
+        }
+
+        /* Section styles */
+        .section {
+            display: none;
+            max-width: 700px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            color: white;
+            text-align: left;
+            animation: slideIn 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section h2 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: #fff;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 3px solid #ff6b6b;
+        }
+
+        .info-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .bio {
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .container {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .button-container {
+                gap: 1rem;
+            }
+
+            .portfolio-btn {
+                padding: 1.2rem 1.5rem;
+            }
+
+            h1 {
+                margin-bottom: 0.5rem;
+            }
+
+            .subtitle {
+                margin-bottom: 2rem;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .portfolio-btn {
+                letter-spacing: 1px;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Main Menu -->
+<div class="container" id="mainMenu">
+    <h1>John Doe</h1>
+    <p class="subtitle">Web Developer & Designer</p>
+    <div class="button-container">
+        <button class="portfolio-btn" onclick="showSection('about')">
+            <span>About Me</span>
+        </button>
+        <button class="portfolio-btn" onclick="window.location.href">
+            <span>Random Quote</span>
+        </button>
+        <button class="portfolio-btn" onclick="showSection('skills')">
+            <span>Skills</span>
+        </button>
+        <button class="portfolio-btn" onclick="window.location.href='http://localhost:8080/homepage'">
+            <span>Contact</span>
+        </button>
+    </div>
+</div>
+
+<!-- About Me Section -->
+<div class="section" id="about">
+    <h2>About Me</h2>
+    <p class="bio">
+        Hi! I'm John Doe, a passionate web developer and designer with over 5 years of experience creating beautiful and functional websites. I love turning ideas into reality through code and design.
+    </p>
+    <div class="info-grid">
+        <div class="info-item">
+            <div class="info-label">Full Name</div>
+            <div class="info-value">John Doe</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">Age</div>
+            <div class="info-value">28 years old</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">Location</div>
+            <div class="info-value">San Francisco, CA</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">Email</div>
+            <div class="info-value">john.doe@email.com</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">Education</div>
+            <div class="info-value">B.S. Computer Science</div>
+        </div>
+        <div class="info-item">
+            <div class="info-label">Experience</div>
+            <div class="info-value">5+ years</div>
+        </div>
+    </div>
+    <button class="back-btn" onclick="showMain()">← Back to Menu</button>
+</div>
+
+<!-- Projects Section -->
+<div class="section" id="quote">
+    <h2>Projects</h2>
+    <p class="bio">My random life quotes.</p>
+    <button class="back-btn" onclick="showMain()">← Back to Menu</button>
+</div>
+
+<!-- Skills Section -->
+<div class="section" id="skills">
+    <h2>Skills</h2>
+    <p class="bio">Coming soon! This section will display my technical skills and expertise.</p>
+    <button class="back-btn" onclick="showMain()">← Back to Menu</button>
+</div>
+
+<!-- Contact Section -->
+<div class="section" id="contact">
+    <h2>Contact</h2>
+    <p class="bio">Coming soon! This section will have ways to get in touch with me.</p>
+    <button class="back-btn" onclick="showMain()">← Back to Menu</button>
+</div>
+
+<script>
+    function showSection(sectionId) {
+        document.getElementById('mainMenu').classList.add('hidden');
+        document.getElementById(sectionId).classList.add('active');
+    }
+
+    function showMain() {
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(section => section.classList.remove('active'));
+        document.getElementById('mainMenu').classList.remove('hidden');
+    }
+</script>
+</body>
+</html>

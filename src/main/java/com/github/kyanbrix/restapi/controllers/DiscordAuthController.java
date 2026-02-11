@@ -280,6 +280,7 @@ public class DiscordAuthController {
         embed.put("description",String.format("<@%s> has joined the server",userId));
         embed.put("timestamp", Instant.now().toString());
 
+
         Map<String, String> author = Map.of("name",userName,
                 "icon_url",AVATAR_URL
         );

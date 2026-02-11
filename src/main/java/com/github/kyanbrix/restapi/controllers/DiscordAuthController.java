@@ -124,7 +124,7 @@ public class DiscordAuthController {
 
         }catch (Exception e) {
 
-            IO.println(e.getMessage());
+            System.out.println(e.getMessage());
         }
 
     }
@@ -200,9 +200,9 @@ public class DiscordAuthController {
         );
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            IO.println("Successfully added a role to user");
+            System.out.println("Successfully added a role to user");
 
-        }else IO.println(response.getBody());
+        }else System.out.println(response.getBody());
 
 
 
@@ -237,8 +237,8 @@ public class DiscordAuthController {
         );
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            IO.println(response.getBody());
-        }else IO.println(response.getBody());
+            System.out.println(response.getBody());
+        }else System.out.println(response.getBody());
 
     }
 
@@ -256,12 +256,12 @@ public class DiscordAuthController {
 
         try (Response response = client.newCall(request).execute()) {
 
-            IO.println(response.code());
+            System.out.println(response.code());
 
             return response.code() != 404;
 
         } catch (IOException e) {
-            IO.println(e);
+            System.out.println(e.getMessage());
             return false;
         }
 

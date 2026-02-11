@@ -100,7 +100,7 @@ public class TokenService {
                 String.class
         );
 
-        if (response.getStatusCode().is2xxSuccessful()) IO.println("Token is now revoked!");
+        if (response.getStatusCode().is2xxSuccessful()) System.out.println("Token is now revoked!");
 
     }
 

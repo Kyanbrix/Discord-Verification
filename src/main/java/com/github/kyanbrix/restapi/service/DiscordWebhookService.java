@@ -84,8 +84,8 @@ public class DiscordWebhookService {
         ResponseEntity<String> response = restTemplate.postForEntity(WEBHOOK_URL,request,String.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            IO.println("Successfully sent to discord");
-        }else IO.println("Error!");
+            System.out.println("Successfully sent to discord");
+        }else System.out.println("Error!");
 
 
     }

@@ -8,10 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class LoginController {
 
 
-    @GetMapping("/verification")
+    @GetMapping("/")
     public String verificationPage() {
 
         return "login.html";
 
     }
+
 }

@@ -67,16 +67,15 @@ public class DiscordAuthController {
 
 
     //User Login
-    @GetMapping("/login")
-    public void requestAuth(HttpServletResponse response) throws IOException {
 
+    @GetMapping("/login")
+    public void login(HttpServletResponse response) throws IOException {
 
         response.sendRedirect("https://discord.com/oauth2/authorize?client_id=1400504977134325781&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fauth%2Fdiscord%2Fredirect&scope=guilds.join+identify");
 
     }
 
     //Return a user information
-
     @GetMapping("/redirect")
     public void callback(@RequestParam(value = "code", required = false) String code,@RequestParam(value = "error",required = false) String error,@RequestParam(value = "description", required = false) String description,HttpServletResponse response) throws IOException {
 

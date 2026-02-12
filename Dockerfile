@@ -1,5 +1,5 @@
-FROM eclipse-temurin:21
-WORKDIR /restapi
+FROM eclipse-temurin:21 AS build
+WORKDIR /app
 
 COPY gradlew .
 COPY gradle gradle
@@ -10,9 +10,10 @@ COPY src src
 RUN ./gradlew bootJar --no-daemon
 
 FROM eclipse-temurin:21-jre-jammy
+
 WORKDIR /app
 
-COPY --from=build /app/build/libs/*.jar app.jar
+COPY --from=build /RestApi/build/libs/*.jar app.jar
 # 1. Use Ubuntu/Debian syntax for creating the user and group
 RUN addgroup --system spring && adduser --system --ingroup spring spring
 

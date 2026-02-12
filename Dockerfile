@@ -13,19 +13,22 @@ RUN ./gradlew bootJar --no-daemon
 
 RUN ls -la build/libs/
 
+# Stage 2: Runtime
 FROM eclipse-temurin:21-jre-jammy
 
 WORKDIR /app
 
-COPY --from=build /app/build/libs/*.jar app.jar
-# 1. Use Ubuntu/Debian syntax for creating the user and group
-RUN addgroup --system spring && adduser --system --ingroup spring spring
+# Copy all jars from build stage
+COPY --from=build /app/build/libs/ ./
 
-# 3. Copy the JAR and ensure the 'spring' user owns it
-# Adding --chown ensures the non-root user can actually run the file
-# 4. Switch to the non-root user
+# Rename to app.jar (assumes only one jar exists)
+RUN mv *.jar app.jar || echo "No jar file found!"
+
+RUN addgroup --system spring && adduser --system --ingroup spring spring
+RUN chown spring:spring app.jar
+
 USER spring:spring
 
 EXPOSE 8080
 
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]

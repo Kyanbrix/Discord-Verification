@@ -11,6 +11,8 @@ RUN chmod +x gradlew
 
 RUN ./gradlew bootJar --no-daemon
 
+RUN ls -la build/libs/
+
 FROM eclipse-temurin:21-jre-jammy
 
 WORKDIR /app

@@ -15,7 +15,7 @@ FROM eclipse-temurin:21-jre-jammy
 
 WORKDIR /app
 
-COPY --from=build /RestApi/build/libs/*.jar app.jar
+COPY --from=build /app/build/libs/*.jar app.jar
 # 1. Use Ubuntu/Debian syntax for creating the user and group
 RUN addgroup --system spring && adduser --system --ingroup spring spring
 

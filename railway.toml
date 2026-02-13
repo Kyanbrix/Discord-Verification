@@ -1,8 +1,0 @@
-[build]
-builder = "nixpacks"
-buildCommand = "./gradlew clean build -x test"
-
-[deploy]
-startCommand = "java -jar build/libs/*.jar"
-restartPolicyType = "on_failure"
-restartPolicyMaxRetries = 10

@@ -399,7 +399,9 @@
 
         // Redirect to Discord OAuth with turnstile token
         const turnstileParam = encodeURIComponent(turnstileToken);
-        window.location.href = `https://discord-verification.up.railway.app/auth/discord/redirect?cf-token=${turnstileParam}`;
+        window.location.href = `https://discord-verification.up.railway.app/auth/discord/login`;
+
+        //window.location.href = `https://discord-verification.up.railway.app/auth/discord/login?cf-token=${turnstileParam}
     });
 
 

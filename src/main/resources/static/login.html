@@ -411,7 +411,7 @@
 
         // Redirect to Discord OAuth with turnstile token
         const turnstileParam = encodeURIComponent(turnstileToken);
-        window.location.href = `http://localhost:8080/auth/discord/login?cf-token=${turnstileParam}`;
+        window.location.href = `https://discord-verification.up.railway.app/?cf-token=${turnstileParam}`;
     });
 
     // Check if there's an error in URL params

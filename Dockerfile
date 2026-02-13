@@ -13,9 +13,9 @@ RUN ./gradlew bootJar --no-daemon
 
 FROM eclipse-temurin:21-jre-jammy
 
-WORKDIR /app
+WORKDIR /src
 
-COPY --from=build /app/build/libs/*.jar app.jar
+COPY --from=build /src/build/libs/*.jar app.jar
 
 RUN addgroup --system spring && adduser --system --ingroup spring spring
 RUN chown spring:spring app.jar

@@ -226,7 +226,6 @@
             </div>
             <div class="user-details">
                 <h3 id="userName">Loading...</h3>
-                <p id="userEmail">Please wait...</p>
                 <span class="verified-badge">
                         <i class="fas fa-shield-alt"></i>
                         Discord Verified
@@ -277,11 +276,6 @@
             document.getElementById('userName').textContent = 'Discord User';
         }
 
-        if (email) {
-            document.getElementById('userEmail').textContent = email;
-        } else {
-            document.getElementById('userEmail').textContent = 'user@discord.com';
-        }
 
         if (avatar) {
             // If avatar URL is provided, show it

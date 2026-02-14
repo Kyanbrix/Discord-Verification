@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafe Discord Welcome</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ["Manrope", "sans-serif"],
+                        serif: ["Playfair Display", "serif"]
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="min-h-screen bg-amber-50 text-amber-950 font-sans">
+    <div class="relative isolate min-h-screen overflow-hidden">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(146,64,14,0.18),transparent_36%),radial-gradient(circle_at_80%_20%,_rgba(120,53,15,0.18),transparent_38%),linear-gradient(to_bottom,_#fffbeb,_#fef3c7)]"></div>
+        <div class="absolute -top-20 -right-14 h-72 w-72 rounded-full bg-amber-300/30 blur-3xl"></div>
+        <div class="absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-orange-300/30 blur-3xl"></div>
+
+        <main class="relative mx-auto flex min-h-screen max-w-4xl items-center justify-center px-6 py-16">
+            <section class="w-full rounded-3xl border border-amber-200/70 bg-white/75 p-8 shadow-2xl shadow-amber-900/15 backdrop-blur md:p-12">
+                <p class="mb-5 inline-flex rounded-full border border-amber-300/80 bg-amber-100 px-4 py-1 text-sm font-semibold tracking-wide text-amber-800">
+                    Café au Chat
+                </p>
+                <h1 class="font-serif text-4xl font-extrabold leading-tight text-amber-900 md:text-5xl">
+                    Join Our Café Discord
+                </h1>
+                <p class="mt-5 max-w-2xl text-base text-amber-800/90 md:text-lg">
+                    Fresh updates, cozy chats, and a welcoming crew are waiting inside. Enter through the button below to continue to your secure login page.
+                </p>
+
+                <div class="mt-10 flex justify-center">
+                    <a href="login.html"
+                       class="inline-flex items-center justify-center rounded-xl bg-amber-700 px-7 py-4 text-lg font-bold text-amber-50 shadow-lg shadow-amber-800/30 transition hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-offset-2 focus:ring-offset-amber-50">
+                        Join Server
+                    </a>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

@@ -15,4 +15,9 @@ public class LoginController {
 
     }
 
+    @GetMapping("/welcome")
+    public String welcomePage() {
+        return "welcome.html";
+    }
+
 }

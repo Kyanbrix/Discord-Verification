@@ -2,16 +2,21 @@ package com.github.kyanbrix.restapi.controllers;
 
 
 import com.github.kyanbrix.restapi.DiscordUserModel;
+import com.github.kyanbrix.restapi.GuildResource;
+import com.github.kyanbrix.restapi.MemberResource;
 import com.github.kyanbrix.restapi.TokenResponse;
 import com.github.kyanbrix.restapi.service.DiscordWebhookService;
 import com.github.kyanbrix.restapi.service.TokenService;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import jakarta.servlet.http.HttpServletResponse;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
+import org.jetbrains.annotations.TestOnly;
+import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,11 +27,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/auth/discord")
@@ -66,12 +67,14 @@ public class DiscordAuthController {
     private static final String DISCORD_URL_BASE = "https://discord.com/api/v10";
 
 
+
+
     //User Login
 
     @GetMapping("/login")
     public void login(HttpServletResponse response) throws IOException {
 
-        response.sendRedirect("https://discord.com/oauth2/authorize?client_id=1400504977134325781&response_type=code&redirect_uri=https%3A%2F%2Fdiscord-verification.up.railway.app%2Fauth%2Fdiscord%2Fredirect&scope=identify+guilds.join");
+        response.sendRedirect("https://discord.com/oauth2/authorize?client_id=1400504977134325781&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fauth%2Fdiscord%2Fredirect&scope=guilds+identify+guilds.join");
 
     }
 
@@ -91,19 +94,24 @@ public class DiscordAuthController {
             }
 
 
-
             TokenResponse tokenResponse = exchangeCodeForToken(code);
 
             DiscordUserModel userModel = getDiscordUserModel(tokenResponse.getAccess_token());
 
-            if (!isMemberOnGuild(userModel.getId())) {
+            if (isUserIfAdmin(userModel.getId())) {
 
-                addMemberToGuild(userModel.getId(), tokenResponse.getAccess_token());
+                response.sendRedirect("/admin-prompt.html");
+                return;
 
-                addRoleToMember(userModel.getId(),tokenResponse.getAccess_token(),"1469676754267275437");
+            } else if (isUserIfAlreadyVerified(userModel.getId())) {
 
-            } else addRoleToMember(userModel.getId(), tokenResponse.getAccess_token(),"1469676754267275437");
+                response.sendRedirect("/user-verified-prompt.html");
 
+                return;
+            }
+
+
+            validateMember(userModel.getId(),tokenResponse.getAccess_token(),userModel.getUsername(),userModel.getAvatar());
 
             String verifiedUrl = UriComponentsBuilder.fromPath("/verified.html")
                     .queryParam("username", userModel.getUsername())
@@ -114,12 +122,7 @@ public class DiscordAuthController {
                     .toUriString();
 
 
-            sendWebhookMessageToDiscord(userModel.getId(),userModel.getUsername(),userModel.getAvatar());
-
-            tokenService.revokeToken(tokenResponse.getAccess_token());
-
             response.sendRedirect(verifiedUrl);
-
 
         }catch (Exception e) {
 
@@ -155,6 +158,7 @@ public class DiscordAuthController {
 
         RestTemplate restTemplate = new RestTemplate();
 
+
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
 
@@ -173,9 +177,11 @@ public class DiscordAuthController {
 
     }
 
-    private void addRoleToMember(String userId, String access_token,String roleId) {
+    private void addRoleToMember(String userId, String access_token,String userName,String user_avatar) {
 
-        String url = String.format("%s/guilds/%s/members/%s/roles/%s",DISCORD_URL_BASE,GUILD_ID,userId,roleId);
+        String url = String.format("%s/guilds/%s/members/%s/roles/1469676754267275437",DISCORD_URL_BASE,GUILD_ID,userId);
+
+        final String AVATAR_URL = String.format("https://cdn.discordapp.com/avatars/%s/%s.png",userId,user_avatar);
 
 
         RestTemplate restTemplate = new RestTemplate();
@@ -187,7 +193,7 @@ public class DiscordAuthController {
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("access_token",access_token);
-        requestBody.put("roles",roleId);
+        requestBody.put("roles","1469676754267275437");
 
         HttpEntity<Map<String,Object>> req = new HttpEntity<>(requestBody,headers);
 
@@ -200,18 +206,13 @@ public class DiscordAuthController {
 
         if (response.getStatusCode().is2xxSuccessful()) {
             System.out.println("Successfully added a role to user");
-
-        }else System.out.println(response.getBody());
-
-
-
-
-
+            sendWebhookMessageToDiscord(userId,userName,AVATAR_URL);
+        }
 
     }
 
 
-    public void addMemberToGuild(String userId, String access_token) {
+    public void addMemberToGuild(String userId, String access_token, String userName, String user_avatar) {
         String url = String.format("%s/guilds/%s/members/%s",DISCORD_URL_BASE,GUILD_ID,userId);
 
         RestTemplate restTemplate = new RestTemplate();
@@ -224,8 +225,6 @@ public class DiscordAuthController {
         requestBody.put("access_token",access_token);
 
 
-
-
         HttpEntity<Map<String, String>> request = new HttpEntity<>(requestBody,headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
@@ -236,14 +235,15 @@ public class DiscordAuthController {
         );
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            System.out.println(response.getBody());
-        }else System.out.println(response.getBody());
+            addRoleToMember(userId,access_token,userName,user_avatar);
+            sendWebhookMessageToDiscord(userId,userName,user_avatar);
+        }else System.out.println("Cannot add user to the guild");
 
     }
 
 
 
-    private boolean isMemberOnGuild(String userId) {
+    private void validateMember(String userId, String access_token, String userName, String avatar) {
 
         OkHttpClient client = new OkHttpClient();
 
@@ -252,17 +252,24 @@ public class DiscordAuthController {
                 .header("Authorization","Bot "+TOKEN)
                 .build();
 
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
 
-        try (Response response = client.newCall(request).execute()) {
+            }
 
-            System.out.println(response.code());
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
 
-            return response.code() != 404;
+                if (response.code() != 404) {
+                    addRoleToMember(userId,access_token,userName,avatar);
+                }else addMemberToGuild(userId,access_token,userName,avatar);
 
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-            return false;
-        }
+
+                tokenService.revokeToken(access_token);
+
+            }
+        });
 
     }
 
@@ -272,32 +279,109 @@ public class DiscordAuthController {
 
         final String AVATAR_URL = String.format("https://cdn.discordapp.com/avatars/%s/%s.png",userId,user_avatar);
 
-        Map<String, Object> payload = new HashMap<>();
+        Map<String, Object> data = getEmbed(userId, userName, AVATAR_URL);
 
-        Map<String, Object> embed = new HashMap<>();
-        embed.put("color","5814783");
-        embed.put("description",String.format("<@%s> has joined the server",userId));
-        embed.put("timestamp", Instant.now().toString());
+        Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
 
+        String json = gson.toJson(data);
 
-        Map<String, String> author = Map.of("name",userName,
-                "icon_url",AVATAR_URL
-        );
-
-        embed.put("author",author);
-
-        List<Map<String, Object>> embeds = new ArrayList<>();
-        embeds.add(embed);
-
-        payload.put("embeds",embeds);
-
-
-
-        webhookService.sendToDiscord(payload);
+        webhookService.sendWebhookMessage(json);
 
 
     }
 
+    private static @NonNull Map<String, Object> getEmbed(String userId, String userName, String AVATAR_URL) {
+
+        Map<String, Object> author = new HashMap<>();
+        author.put("name", userName);
+        author.put("icon_url", AVATAR_URL);
+
+
+        Map<String, Object> firstEmbed = new HashMap<>();
+        firstEmbed.put("description",String.format("<@%s> has joined the server", userId));
+        firstEmbed.put("author",author);
+        firstEmbed.put("color","15314480");
+
+
+        List<Map<String, Object>> embeds = new ArrayList<>();
+        embeds.add(firstEmbed);
+
+
+        Map<String, Object> jsonBody = new HashMap<>();
+        jsonBody.put("embeds",embeds);
+        jsonBody.put("content",null);
+
+        return jsonBody;
+    }
+
+
+    private boolean isUserIfAdmin(String userId) {
+
+        OkHttpClient client = new OkHttpClient();
+
+
+        Request request = new Request.Builder()
+            .url(DISCORD_URL_BASE+"/guilds/"+GUILD_ID)
+                .addHeader("Authorization","Bot "+ TOKEN)
+                .addHeader("Content-Type","application/json")
+
+                .build();
+
+        try (Response rs = client.newCall(request).execute()) {
+
+            if (rs.isSuccessful()) {
+                String data = rs.body().string();
+                Gson gson = new Gson();
+
+                GuildResource guildResource = gson.fromJson(data, GuildResource.class);
+
+                return (userId.equals(guildResource.owner_id));
+
+            }else {
+                System.out.println("Response unsuccessful "+ rs.body());
+                return false;
+            }
+
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+
+
+    }
+
+    private boolean isUserIfAlreadyVerified(String userId) {
+
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(String.format(DISCORD_URL_BASE+"/guilds/%s/members/%s",GUILD_ID,userId))
+                .addHeader("Authorization","Bot "+TOKEN)
+                .get()
+                .build();
+
+        try(Response response = client.newCall(request).execute()) {
+
+            if (response.isSuccessful()) {
+
+                Gson gson = new Gson();
+
+                String data = response.body().string();
+
+                MemberResource memberResource = gson.fromJson(data, MemberResource.class);
+
+                return memberResource.roles.contains("1469676754267275437");
+
+            }
+
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+
+    }
 
 
 

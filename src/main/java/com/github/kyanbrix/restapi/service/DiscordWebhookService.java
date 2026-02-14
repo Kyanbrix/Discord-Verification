@@ -1,5 +1,7 @@
 package com.github.kyanbrix.restapi.service;
 
+import okhttp3.*;
+import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -7,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,42 +53,37 @@ public class DiscordWebhookService {
         }
     }
 
-    public void postRequestWebhook(String quote) {
+
+    public void sendWebhookMessage(String jsonData) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        Map<String,Object> payload = new HashMap<>();
+        OkHttpClient client = new OkHttpClient();
 
+        RequestBody requestBody = RequestBody.create(jsonData, okhttp3.MediaType.get("application/json; charset=utf8"));
 
-        //Embed Builder
-        Map<String, Object> embed = new HashMap<>();
+        Request request = new Request.Builder()
+                .url(WEBHOOK_URL)
+                .post(requestBody)
+                .build();
 
-        embed.put("title","Quote Created");
-        embed.put("description","Successfully added a quote `` "+quote+" ``");
-        embed.put("timestamp", Instant.now().toString());
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                System.out.println("Error: "+ e.getMessage());
+            }
 
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
 
+                if (response.isSuccessful()) {
+                    System.out.println("Webhook message sent to discord");
+                }else System.out.println("Not Success");
 
+            }
+        });
 
-
-        List<Map<String,Object>> embeds = new ArrayList<>();
-        embeds.add(embed);
-
-        payload.put("embeds",embeds);
-
-        payload.put("username","Rest API");
-        payload.put("avatar_url","https://avatars.githubusercontent.com/u/100282972?v=4");
-
-
-
-        HttpEntity<Map<String,Object>> request = new HttpEntity<>(payload,headers);
-
-        ResponseEntity<String> response = restTemplate.postForEntity(WEBHOOK_URL,request,String.class);
-
-        if (response.getStatusCode().is2xxSuccessful()) {
-            System.out.println("Successfully sent to discord");
-        }else System.out.println("Error!");
 
 
     }

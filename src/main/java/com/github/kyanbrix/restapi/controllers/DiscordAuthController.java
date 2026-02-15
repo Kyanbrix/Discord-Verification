@@ -209,7 +209,6 @@ public class DiscordAuthController {
 
         if (response.getStatusCode().is2xxSuccessful()) {
             System.out.println("Successfully added a role to user");
-            sendWebhookMessageToDiscord(userId,userName,AVATAR_URL);
         }
 
     }
@@ -266,6 +265,8 @@ public class DiscordAuthController {
 
                 if (response.code() != 404) {
                     addRoleToMember(userId,access_token,userName,avatar);
+                    sendWebhookMessageToDiscord(userId,userName,avatar);
+
                 }else addMemberToGuild(userId,access_token,userName,avatar);
 
 

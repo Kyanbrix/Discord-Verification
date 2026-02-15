@@ -11,13 +11,13 @@ public class LoginController {
     @GetMapping("/")
     public String verificationPage() {
 
-        return "login.html";
+        return "welcome.html";
 
     }
 
-    @GetMapping("/welcome")
+    @GetMapping("/verify")
     public String welcomePage() {
-        return "welcome.html";
+        return "login.html";
     }
 
 }

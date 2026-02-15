@@ -74,7 +74,8 @@ public class DiscordAuthController {
     @GetMapping("/login")
     public void login(HttpServletResponse response) throws IOException {
 
-        response.sendRedirect("https://discord.com/oauth2/authorize?client_id=1400504977134325781&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fauth%2Fdiscord%2Fredirect&scope=guilds+identify+guilds.join");
+        response
+                .sendRedirect("https://discord.com/oauth2/authorize?client_id=1400504977134325781&response_type=code&redirect_uri=https%3A%2F%2Fdiscord-verification.up.railway.app%2Fauth%2Fdiscord%2Fredirect&scope=identify+guilds+guilds.join");
 
     }
 

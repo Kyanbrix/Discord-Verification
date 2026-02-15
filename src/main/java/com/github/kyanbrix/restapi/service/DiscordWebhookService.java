@@ -71,7 +71,7 @@ public class DiscordWebhookService {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                System.out.println("Error: "+ e.getMessage());
+                System.out.println("Error Webhook: "+ e.getMessage());
             }
 
             @Override
@@ -81,6 +81,8 @@ public class DiscordWebhookService {
                     System.out.println("Webhook message sent to discord");
                 }else System.out.println("Not Success");
 
+
+                response.close();
             }
         });
 

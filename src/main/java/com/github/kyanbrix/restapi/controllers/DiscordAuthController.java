@@ -71,7 +71,7 @@ public class DiscordAuthController {
 
 
 
-    //User Login
+
 
     @GetMapping("/login")
     public void login(HttpServletResponse response) throws IOException {
@@ -81,9 +81,8 @@ public class DiscordAuthController {
 
     }
 
-    //Return a user information
     @GetMapping("/redirect")
-    public void callback(@RequestParam(value = "code", required = false) String code,@RequestParam(value = "error",required = false) String error,@RequestParam(value = "description", required = false) String description,HttpServletResponse response) throws IOException {
+    public void callback(@RequestParam(value = "code", required = false) String code,@RequestParam(value = "error",required = false) String error, HttpServletResponse response) {
 
         try {
 
@@ -103,11 +102,15 @@ public class DiscordAuthController {
 
             if (isUserIfAdmin(userModel.getId())) {
 
+                System.out.println("User is an Admin");
+                tokenService.revokeToken(tokenResponse.getAccess_token());
                 response.sendRedirect("/admin-prompt.html");
                 return;
 
             } else if (isUserIfAlreadyVerified(userModel.getId())) {
 
+                System.out.println("User is already verified");
+                tokenService.revokeToken(tokenResponse.getAccess_token());
                 response.sendRedirect("/user-verified-prompt.html");
 
                 return;
@@ -118,7 +121,6 @@ public class DiscordAuthController {
 
             String verifiedUrl = UriComponentsBuilder.fromPath("/verified.html")
                     .queryParam("username", userModel.getUsername())
-                    .queryParam("email", userModel.getEmail())
                     .queryParam("id", userModel.getId())
                     .queryParam("avatar", String.format("https://cdn.discordapp.com/avatars/%s/%s.png?size=64",userModel.getId(),userModel.getAvatar()))
                     .build()
@@ -237,6 +239,7 @@ public class DiscordAuthController {
         );
 
         if (response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("Successfully added a member to the guild");
             addRoleToMember(userId,access_token,userName,user_avatar);
             sendWebhookMessageToDiscord(userId,userName,user_avatar);
         }else System.out.println("Cannot add user to the guild");
@@ -258,10 +261,11 @@ public class DiscordAuthController {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
 
+                System.out.println("Failed Request: "+ e.getMessage());
             }
 
             @Override
-            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull Response response) {
 
                 if (response.code() != 404) {
                     addRoleToMember(userId,access_token,userName,avatar);
@@ -271,6 +275,8 @@ public class DiscordAuthController {
 
 
                 tokenService.revokeToken(access_token);
+
+                response.close();
 
             }
         });

@@ -11,7 +11,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import jakarta.servlet.http.HttpServletResponse;
 import okhttp3.*;
-import org.jetbrains.annotations.TestOnly;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +26,10 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth/discord")
@@ -75,7 +77,7 @@ public class DiscordAuthController {
     public void login(HttpServletResponse response) throws IOException {
 
         response
-                .sendRedirect("https://discord.com/oauth2/authorize?client_id=1400504977134325781&response_type=code&redirect_uri=https%3A%2F%2Fdiscord-verification.up.railway.app%2Fauth%2Fdiscord%2Fredirect&scope=identify+guilds+guilds.join");
+                .sendRedirect("https://discord.com/oauth2/authorize?client_id=1470149609073545377&response_type=code&redirect_uri=https%3A%2F%2Fdiscord-verification.up.railway.app%2Fauth%2Fdiscord%2Fredirect&scope=identify+guilds+guilds.join");
 
     }
 
@@ -180,7 +182,7 @@ public class DiscordAuthController {
 
     private void addRoleToMember(String userId, String access_token,String userName,String user_avatar) {
 
-        String url = String.format("%s/guilds/%s/members/%s/roles/1469676754267275437",DISCORD_URL_BASE,GUILD_ID,userId);
+        String url = String.format("%s/guilds/%s/members/%s/roles/1472336089657114745",DISCORD_URL_BASE,GUILD_ID,userId);
 
         final String AVATAR_URL = String.format("https://cdn.discordapp.com/avatars/%s/%s.png",userId,user_avatar);
 
@@ -194,7 +196,7 @@ public class DiscordAuthController {
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("access_token",access_token);
-        requestBody.put("roles","1469676754267275437");
+        requestBody.put("roles","1472336089657114745");
 
         HttpEntity<Map<String,Object>> req = new HttpEntity<>(requestBody,headers);
 
@@ -372,7 +374,7 @@ public class DiscordAuthController {
 
                 MemberResource memberResource = gson.fromJson(data, MemberResource.class);
 
-                return memberResource.roles.contains("1469676754267275437");
+                return memberResource.roles.contains("1472336089657114745") || memberResource.roles.contains("1469573549076250665") || memberResource.roles.contains("1469571441098883249") || memberResource.roles.contains("1469570813413032027");
 
             }
 

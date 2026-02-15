@@ -19,7 +19,7 @@ import java.util.Map;
 @Service
 public class DiscordWebhookService {
 
-    private static final String WEBHOOK_URL = "https://discord.com/api/webhooks/1468371784654131358/SOHAVGoa2hQT9w__PcRjgS7b-EXOEnjtmymglXl3oFtNth7NmapZGEsUDXOZ2Gx4m-U6";
+    private static final String WEBHOOK_URL = "https://discord.com/api/webhooks/1472353251578876197/CUL1FXmhAPL1XrPKqE8ghULfmd1jJT1KgZprgEUjUbRyrL3AQT0CsniAG_VaY3UfQ8fQ";
 
     private final RestTemplate restTemplate;
 

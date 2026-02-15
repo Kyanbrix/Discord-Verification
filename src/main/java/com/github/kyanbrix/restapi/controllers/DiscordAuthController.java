@@ -182,7 +182,7 @@ public class DiscordAuthController {
 
     private void addRoleToMember(String userId, String access_token,String userName,String user_avatar) {
 
-        String url = String.format("%s/guilds/%s/members/%s/roles/1472336089657114745",DISCORD_URL_BASE,GUILD_ID,userId);
+        String url = String.format("%s/guilds/1469324454470353163/members/%s/roles/1472336089657114745",DISCORD_URL_BASE,userId);
 
         final String AVATAR_URL = String.format("https://cdn.discordapp.com/avatars/%s/%s.png",userId,user_avatar);
 
@@ -216,7 +216,7 @@ public class DiscordAuthController {
 
 
     public void addMemberToGuild(String userId, String access_token, String userName, String user_avatar) {
-        String url = String.format("%s/guilds/%s/members/%s",DISCORD_URL_BASE,GUILD_ID,userId);
+        String url = String.format("%s/guilds/1469324454470353163/members/%s",DISCORD_URL_BASE,userId);
 
         RestTemplate restTemplate = new RestTemplate();
 
@@ -251,7 +251,7 @@ public class DiscordAuthController {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
-                .url(String.format("%s/guilds/%s/members/%s",DISCORD_URL_BASE,GUILD_ID,userId))
+                .url(String.format("%s/guilds/1469324454470353163/members/%s",DISCORD_URL_BASE,userId))
                 .header("Authorization","Bot "+TOKEN)
                 .build();
 
@@ -324,7 +324,7 @@ public class DiscordAuthController {
 
 
         Request request = new Request.Builder()
-            .url(DISCORD_URL_BASE+"/guilds/"+GUILD_ID)
+            .url(DISCORD_URL_BASE+"/guilds/1469324454470353163")
                 .addHeader("Authorization","Bot "+ TOKEN)
                 .addHeader("Content-Type","application/json")
 
@@ -359,7 +359,7 @@ public class DiscordAuthController {
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
-                .url(String.format(DISCORD_URL_BASE+"/guilds/%s/members/%s",GUILD_ID,userId))
+                .url(String.format(DISCORD_URL_BASE+"/guilds/1469324454470353163/members/%s",userId))
                 .addHeader("Authorization","Bot "+TOKEN)
                 .get()
                 .build();

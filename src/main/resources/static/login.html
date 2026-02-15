@@ -295,11 +295,6 @@
     </div>
 
     <div class="login-body">
-        <div class="welcome-text">
-            <h2>Welcome to the Café au Chat</h2>
-            <p>Please verify your account to enter our cafe community.</p>
-        </div>
-
         <div class="verification-info">
             <div class="info-badge">
                 <i class="fas fa-info-circle"></i>
@@ -410,7 +405,7 @@
         const turnstileParam = encodeURIComponent(turnstileToken);
         window.location.href = `https://discord-verification.up.railway.app/auth/discord/login`;
 
-        //window.location.href = `http://localhost:8080/auth/discord/login?cf-token=${turnstileParam}
+        //window.location.href = `https://discord-verification.up.railway.app/auth/discord/login?cf-token=${turnstileParam}
     });
 
 

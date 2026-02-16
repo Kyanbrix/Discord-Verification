@@ -7,12 +7,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class LoginController {
 
-
     @GetMapping("/")
-    public String verificationPage() {
+    public String index() {
+        return "forward:/welcome.html";
+    }
 
-        return "welcome.html";
-
+    @GetMapping("/robots.txt")
+    public String robots() {
+        return "forward:/robots.txt";
     }
 
     @GetMapping("/verify")
